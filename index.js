@@ -54,7 +54,7 @@ client.login(process.env.TOKEN).then(async () => {
   const cronBandit = "55 11,17 * * *"
   const cronBanquet = "25 19 * * *"
   const cronCrystal = "25 16 * * *"
-  const cronFuzzy = "55 15 * * 6,7"
+  const cronFuzzy = "55 15 * * 0,6"
 
   //notify
   const everyoneTag = "@everyone"

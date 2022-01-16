@@ -1,6 +1,10 @@
 // Require the necessary discord.js classes
+const pkg = require('./package.json')
+console.log(pkg.version)
+
 var dotenv = require('dotenv')
 dotenv.config()
+console.log(process.env.NODE_ENV || 'dev') 
 
 const fs = require('fs');
 const { Client, Collection, Intents } = require('discord.js');

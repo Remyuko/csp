@@ -4,7 +4,6 @@ dotenv.config()
 
 const fs = require('fs');
 const { Client, Collection, Intents } = require('discord.js');
-const { token } = require('./config.json');
 
 // Create a new client instance
 const client = new Client({ intents: [Intents.FLAGS.GUILDS] });
@@ -54,12 +53,14 @@ client.login(process.env.TOKEN).then(async () => {
   const cronWB_2 = "25 22 * * *"
   const cronBandit = "55 11,17 * * *"
   const cronBanquet = "25 19 * * *"
+  const cronCrystal = "25 16 * * *"
 
   //notify
   const everyoneTag = "@everyone"
   const notifyWB = "rampage!"
   const notifyBandit = "bandit!"
   const notifyBanquet = "banquet!"
+  const notifyCrystal = "crystal!"
 
   //set Job
   var jobWB_1 = new CronJob(
@@ -110,8 +111,22 @@ client.login(process.env.TOKEN).then(async () => {
     null, true, timezone
   );
 
+  var jobCrystal = new CronJob(
+    cronCrystal,
+    async () => {
+      try {
+        await channel.send(everyoneTag.concat(" ", notifyCrystal))
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    null, true, timezone
+  );
+
   jobWB_1.start()
   jobWB_2.start()
   jobBandit.start()
   jobBanquet.start()
+  jobCrystal.start()
 });
+

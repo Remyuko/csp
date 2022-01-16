@@ -54,6 +54,7 @@ client.login(process.env.TOKEN).then(async () => {
   const cronBandit = "55 11,17 * * *"
   const cronBanquet = "25 19 * * *"
   const cronCrystal = "25 16 * * *"
+  const cronFuzzy = "55 15 * * 6,7"
 
   //notify
   const everyoneTag = "@everyone"
@@ -61,6 +62,7 @@ client.login(process.env.TOKEN).then(async () => {
   const notifyBandit = "bandit!"
   const notifyBanquet = "banquet!"
   const notifyCrystal = "crystal!"
+  const notifyFuzzy = "fuzzy!"
 
   //set Job
   var jobWB_1 = new CronJob(
@@ -123,10 +125,23 @@ client.login(process.env.TOKEN).then(async () => {
     null, true, timezone
   );
 
+  var jobFuzzy = new CronJob(
+    cronFuzzy,
+    async () => {
+      try {
+        await channel.send(everyoneTag.concat(" ", notifyFuzzy))
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    null, true, timezone
+  );
+
   jobWB_1.start()
   jobWB_2.start()
   jobBandit.start()
   jobBanquet.start()
   jobCrystal.start()
+  jobFuzzy.start()
 });
 

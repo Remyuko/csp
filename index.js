@@ -1,12 +1,13 @@
 // Require the necessary discord.js classes
+const fs = require('fs')
+const axios = require('axios')
 const pkg = require('./package.json')
 console.log(pkg.version)
 
 var dotenv = require('dotenv')
 dotenv.config()
-console.log(process.env.NODE_ENV || 'dev') 
+console.log(process.env.NODE_ENV || 'dev')
 
-const fs = require('fs');
 const { Client, Collection, Intents } = require('discord.js');
 
 // Create a new client instance
@@ -44,12 +45,19 @@ client.once('ready', () => {
 // });
 
 // Login to Discord with your client's token
+
+
+
+
 client.login(process.env.TOKEN).then(async () => {
   var CronJob = require('cron').CronJob;
 
   //channel settings
   const cnID = "932088122446069781" //channel notification
   const channel = await client.channels.fetch(cnID)
+
+  const cnEvent = "934403731498360923"
+  const channelEvent = await client.channels.fetch(cnEvent)
 
   //cron settings
   const timezone = 'Asia/Saigon'
@@ -147,5 +155,64 @@ client.login(process.env.TOKEN).then(async () => {
   jobBanquet.start()
   jobCrystal.start()
   jobFuzzy.start()
+
+  const { data: body } = await axios.get('https://cloudsong.vnggames.com/en/event/list.1.html#')
+
+  var re = new RegExp(/href=(["'])(.*?)\1/g)
+  var r = body.match(re)
+  if (r) {
+    r = r.filter(x => x.includes('cloudsong.vnggames.com/event/'))
+    r = [...new Set(r)]
+    r = r.map(x => x.replace(/"/g,'').replace('href=//', 'https://'))
+    debugger
+
+    const data = fs.readFileSync('./event.txt',{ encoding: 'utf8', flag: 'r' });
+    const listEvents = JSON.parse(data)
+
+    listEvents.forEach(x => {
+      r = r.filter(c => c !== x)
+    })
+    debugger
+
+    r.forEach(async (url) => {
+      try {
+        listEvents.push(url)
+        await channelEvent.send(url)
+      } catch (error) {
+        console.log(error);
+        debugger
+      }
+    })
+
+    fs.writeFileSync('./event.txt',JSON.stringify(listEvents))
+    debugger
+  }
+
+  // Display data
+  // request({ uri: "https://cloudsong.vnggames.com/en/event/list.1.html#" }, function (error, response, body) {
+  //   //console.log(body)
+  //   //var re = new RegExp('/href=(["\'])(.*?)/g')
+  //   var re = new RegExp(/href=(["'])(.*?)\1/g)
+  //   var r = body.match(re)
+  //   if (r) {
+  //     r = r.filter(x => x.includes('cloudsong.vnggames.com/event/'))
+  //     r = [...new Set(r)]
+
+  //     r.forEach(async (url) => {
+  //       try {
+  //         await channelEvent.send(url)
+  //       } catch (error) {
+  //         console.log(error);
+  //         debugger
+  //       }
+  //     })
+
+
+
+  //     //fs.writeFileSync('./event.txt',JSON.stringify(r))
+  //   }
+  //   //const data = fs.readFileSync('./event.txt',{ encoding: 'utf8', flag: 'r' });
+  //   //console.log(data)
+  // })
 });
 
